@@ -3,11 +3,18 @@
 SDL_Renderer* gRenderer = nullptr; // ~ this is a definition
 
 Entity* player = nullptr;
-Entity* tile = nullptr;
+Entity* newT = nullptr;
 
-vector <Entity*> walls{}; // dynamic vector that stores instances of class Body
+int speedX = 0;
+int lt_accel = 0;
+int rt_accel = 0;
 
-int shift = 0;
+int speedY = 0;
+int jumpStr = 26;
+int gravity = 2;
+
+int up = 0;
+int collision = 1;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, int flags) {
 
@@ -22,7 +29,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, in
 			isRunning = true;
 		}
 	}
-	player = new Entity;
+	player = new Entity();
+	newT = new Entity();
 }
 
 void Game::handleEvents() {
@@ -41,34 +49,47 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-	player->loadTexture("assets/tard/tard_00.png");
-	for (int count = 0; count < 5; count++) {
-		walls.push_back(new Entity());
-		walls[count]->loadTexture("assets/grass_tile.png");
+	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_d)]) {
+		rt_accel++;
 	}
-	shift += 15;
-	player->giveRect()->y += shift; 
+	else {
+		rt_accel = 0;
+	}
+
+	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_a)]) {
+		lt_accel++;
+	}
+	else {
+		lt_accel = 0;
+	}
+
+	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_SPACE)]) {
+		up = 1;
+		gravity = 0;
+	}
+	else {
+		up = 0;
+	}
+
+	if (player->isColliding(player->getRect(), newT->getTile())) {
+		gravity = 0;
+		collision = 0;
+	}
+	else {
+		collision = 1;
+	}
+
+	speedX += rt_accel - lt_accel;
+	gravity++;
+	speedY += (gravity * collision) - (jumpStr * up);
 }
 
 void Game::render() {
-	int x_increment = 320;
-
 	SDL_RenderClear(gRenderer);
 	// --------------------------
 
-	player->drawTexture(300, 150, 4);
-
-	for (int count = 0; count < 5; count++) {
-		walls[count]->drawTexture(x_increment, 350, 2); 
-		x_increment += (24 * 2);
-	}
-
-	for(int count=0;count<5;count++)
-	{
-		if (SDL_HasIntersection(player->giveRect(), walls[count]->giveRect())) { // same as ~ tile->giveRect()
-			player->giveRect()->y = walls[count]->giveRect()->y - walls[count]->giveRect()->h;
-		}
-	}
+	player->drawPlayer(200, 100, 50, 50);
+	newT->drawTile(400, 300, 100, 40);
 
 	// --------------------------
 	SDL_SetRenderDrawColor(gRenderer, 64, 64, 64, 1);

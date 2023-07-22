@@ -1,21 +1,23 @@
 #pragma once
 
 #include <SDL.h>
-#include <SDL_image.h>
 #include "Game.h"
-#include <map>
-#include <vector>
-using namespace std;
 
-extern int shift;
+extern int speedX;
+extern int speedY;
+
+extern int gravity;
+extern int collision;
 
 class Entity {
 private:
-	SDL_Texture* texture;
-	SDL_Rect src, dest;
+	SDL_Rect p_rect;
+	SDL_Rect t_rect;
 
 public:
-	void loadTexture(const char*);
-	void drawTexture(int, int, int);
-	SDL_Rect* giveRect() { return &dest; }
+	void drawPlayer(int, int, int, int);
+	void drawTile(int, int, int, int);
+	SDL_Rect* getRect() { return &p_rect; }
+	SDL_Rect* getTile() { return &t_rect; }
+	bool isColliding(SDL_Rect*, SDL_Rect*);
 };

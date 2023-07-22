@@ -2,10 +2,7 @@
 
 #include <SDL.h>
 #include <iostream>
-#include <map>
 #include "Entity.h"
-#include <string>
-#include <vector>
 using namespace std;
 
 extern SDL_Renderer* gRenderer; // ~ this is a declaration
