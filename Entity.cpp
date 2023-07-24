@@ -25,28 +25,14 @@ void Entity::drawTile(int x, int y, int w, int h) {
 }
 
 bool Entity::isColliding(SDL_Rect* player, SDL_Rect* tile) {
-	
-	int top, bottom, left, right;
-	int top2, bottom2, left2, right2;
-
-	top = player->y;
-	bottom = player->y + player->h;
-	left = player->x;
-	right = player->x + player->w;
-
-	top2 = tile->y;
-	bottom2 = tile->y + tile->h;
-	left2 = tile->x;
-	right2 = tile->x + tile->w;
-
+	/*
 	if (bottom < top2 || top > bottom2 || right < left2 || left > right2) {
 		return false;
 	}
 	return true;
-	/*
-	if (SDL_HasIntersection(player, tile)) {
+	if (SDL_IntersectRect(player, tile, &intersect)) {
 		return true;
 	}
-	return false;
 	*/
+	return 0;
 }

@@ -9,6 +9,8 @@ extern int speedY;
 extern int gravity;
 extern int collision;
 
+extern SDL_Rect intersect;
+
 class Entity {
 private:
 	SDL_Rect p_rect;
