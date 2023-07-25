@@ -7,6 +7,8 @@ Entity* newT = nullptr;
 
 SDL_Rect intersect;
 
+SDL_Rect sink = {400, 300, 25, 27};
+
 int speedX = 0;
 int lt_accel = 0;
 int rt_accel = 0;
@@ -60,18 +62,6 @@ void Game::update() {
 
 	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_a)]) {
 		lt_accel++;
-		if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
-			int left, right2;
-	
-			left = player->getRect()->x;
-
-			right2 = newT->getTile()->x + newT->getTile()->w;
-
-			if (left <= right2) {
-				up = 0;
-				speedY += (intersect.h);
-			}
-		}
 	}
 	else {
 		lt_accel = 0;
@@ -80,25 +70,13 @@ void Game::update() {
 	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_SPACE)]) {
 		up = 1;
 		gravity = 0;
-
-		if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
-			int top, bottom2;
-
-			top = player->getRect()->y;
-
-			bottom2 = newT->getTile()->y + newT->getTile()->h;
-
-			if (top <= bottom2) {
-				up = 0;
-				speedY += (intersect.h);
-			}
-		}
 	}
 	else {
 		up = 0;
 	}
 
 	if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
+
 		int top, bottom, left, right;
 		int top2, bottom2, left2, right2;
 
@@ -112,23 +90,37 @@ void Game::update() {
 		left2 = newT->getTile()->x;
 		right2 = newT->getTile()->x + newT->getTile()->w;
 
-		if (bottom >= top2) {
+		// comparing height: top / bottom
+		if (intersect.h <= sink.h) {
 			gravity = 0;
 			collision = 0;
-			speedY -= (intersect.h - 1);
+			speedY -= intersect.h - 1;
+		}
+
+		// coparing width: left / right
+		if (intersect.w <= sink.w) {
+			gravity = 0;
+			rt_accel = 0;
+			speedX -= intersect.w;
 		}
 
 		/*
 		if (top <= bottom2) {
 			up = 0;
-			speedY += (intersect.h);
+			speedY += intersect.h;
+		}
+
+		if(left <= right2 && bottom > (top2 + 27)){
+		    gravity = 0;
+		    speedX += intersect.w;
+		}
+
+		if (right >= left2 && bottom > (top2 + 27)) {
+			//collision = 0;
+			gravity = 0;
+			//speedX -= intersect.w;
 		}
 		*/
-
-		if (right >= left2) {
-			gravity = 0;
-			speedX -= intersect.w;
-		}
 	}
 	else {
 		collision = 1;
@@ -144,7 +136,7 @@ void Game::render() {
 	// --------------------------
 
 	player->drawPlayer(200, 100, 50, 50);
-	newT->drawTile(400, 300, 100, 40);
+	newT->drawTile(400, 100, 100, 300);
 
 	// --------------------------
 	SDL_SetRenderDrawColor(gRenderer, 64, 64, 64, 1);

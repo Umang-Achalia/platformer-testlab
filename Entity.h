@@ -11,6 +11,8 @@ extern int collision;
 
 extern SDL_Rect intersect;
 
+extern SDL_Rect sink;
+
 class Entity {
 private:
 	SDL_Rect p_rect;
