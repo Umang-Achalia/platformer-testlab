@@ -23,16 +23,3 @@ void Entity::drawTile(int x, int y, int w, int h) {
 	SDL_RenderDrawRect(gRenderer, &t_rect);
 	SDL_RenderFillRect(gRenderer, &t_rect);
 }
-
-bool Entity::isColliding(SDL_Rect* player, SDL_Rect* tile) {
-	/*
-	if (bottom < top2 || top > bottom2 || right < left2 || left > right2) {
-		return false;
-	}
-	return true;
-	if (SDL_IntersectRect(player, tile, &intersect)) {
-		return true;
-	}
-	*/
-	return 0;
-}

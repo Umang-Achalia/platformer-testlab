@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include "Game.h"
 
-extern int speedX;
-extern int speedY;
+extern float speedX;
+extern float speedY;
 
 extern int gravity;
 extern int collision;
@@ -23,5 +23,4 @@ public:
 	void drawTile(int, int, int, int);
 	SDL_Rect* getRect() { return &p_rect; }
 	SDL_Rect* getTile() { return &t_rect; }
-	bool isColliding(SDL_Rect*, SDL_Rect*);
 };

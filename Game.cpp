@@ -7,13 +7,14 @@ Entity* newT = nullptr;
 
 SDL_Rect intersect;
 
-SDL_Rect sink = {400, 300, 25, 27};
+SDL_Rect sink = {400, 100, 27, 27};
 
-int speedX = 0;
-int lt_accel = 0;
-int rt_accel = 0;
+float speedX = 0;
+float lt_accel = 0;
+float rt_accel = 0;
+float maxX = 25.2f;
 
-int speedY = 0;
+float speedY = 0;
 int jumpStr = 26;
 int gravity = 2;
 
@@ -48,6 +49,21 @@ void Game::handleEvents() {
 		case SDL_QUIT:
 			isRunning = false;
 			break;
+
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym) {
+			case SDLK_SPACE:
+				up = 1;
+				gravity = 0;
+				continue;
+			}
+
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym) {
+			case SDLK_SPACE:
+				up = 0;
+				continue;
+			}
 		}
 	}
 }
@@ -55,6 +71,7 @@ void Game::handleEvents() {
 void Game::update() {
 	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_d)]) {
 		rt_accel++;
+		if (rt_accel >= maxX) { rt_accel = maxX; }
 	}
 	else {
 		rt_accel = 0;
@@ -62,11 +79,13 @@ void Game::update() {
 
 	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_a)]) {
 		lt_accel++;
+		if (lt_accel <= -maxX) { lt_accel = -maxX; }
 	}
 	else {
 		lt_accel = 0;
 	}
 
+	/*
 	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_SPACE)]) {
 		up = 1;
 		gravity = 0;
@@ -74,56 +93,50 @@ void Game::update() {
 	else {
 		up = 0;
 	}
+	*/
 
 	if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
 
-		int top, bottom, left, right;
-		int top2, bottom2, left2, right2;
-
-		top = player->getRect()->y;
-		bottom = player->getRect()->y + player->getRect()->h;
-		left = player->getRect()->x;
-		right = player->getRect()->x + player->getRect()->w;
-
-		top2 = newT->getTile()->y;
-		bottom2 = newT->getTile()->y + newT->getTile()->h;
-		left2 = newT->getTile()->x;
-		right2 = newT->getTile()->x + newT->getTile()->w;
-
 		// comparing height: top / bottom
 		if (intersect.h <= sink.h) {
-			gravity = 0;
-			collision = 0;
-			speedY -= intersect.h - 1;
+
+			// top collision special if
+			if(intersect.y == sink.y){
+				gravity = 0;
+				collision = 0;
+				speedY -= intersect.h ;
+			}
+			
+			// bottom collision special if
+			if (intersect.y > (sink.y + 1)) {
+				gravity = 0;
+				up = 0;
+				jumpStr = 0;
+				speedY += (intersect.h);
+			}
 		}
 
 		// coparing width: left / right
-		if (intersect.w <= sink.w) {
-			gravity = 0;
-			rt_accel = 0;
-			speedX -= intersect.w;
-		}
+		if (intersect.w <= sink.w && intersect.y >= (sink.y + 1)) {
 
-		/*
-		if (top <= bottom2) {
-			up = 0;
-			speedY += intersect.h;
-		}
+			// left special condition
+			if(intersect.x == sink.x) {
+				gravity = 0;
+				rt_accel = 0;
+				speedX -= intersect.w;
+			}
 
-		if(left <= right2 && bottom > (top2 + 27)){
-		    gravity = 0;
-		    speedX += intersect.w;
+			// right special condition
+			if (intersect.x > sink.x) {
+				gravity = 0;
+				lt_accel = 0;
+				speedX += intersect.w;
+			}
 		}
-
-		if (right >= left2 && bottom > (top2 + 27)) {
-			//collision = 0;
-			gravity = 0;
-			//speedX -= intersect.w;
-		}
-		*/
 	}
 	else {
 		collision = 1;
+		jumpStr = 26;
 	}
 
 	speedX += rt_accel - lt_accel;
