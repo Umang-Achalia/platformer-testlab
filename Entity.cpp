@@ -12,14 +12,3 @@ void Entity::drawPlayer(int x, int y, int w, int h) {
 	SDL_RenderDrawRect(gRenderer, &p_rect);
 	SDL_RenderFillRect(gRenderer, &p_rect);
 }
-
-void Entity::drawTile(int x, int y, int w, int h) {
-	t_rect.x = x;
-	t_rect.y = y;
-	t_rect.w = w;
-	t_rect.h = h;
-
-	SDL_SetRenderDrawColor(gRenderer, 251, 219, 101, 1);
-	SDL_RenderDrawRect(gRenderer, &t_rect);
-	SDL_RenderFillRect(gRenderer, &t_rect);
-}

@@ -1,13 +1,17 @@
 #include "Game.h"
 
+const int sink_depth = 27; // px
+
+const int stay_on_floor = 1; // prevents jittering of player on ground
+
 SDL_Renderer* gRenderer = nullptr; // ~ this is a definition
 
 Entity* player = nullptr;
-Entity* newT = nullptr;
+Tile* newT = nullptr;
+TileMap* level1 = nullptr;
 
 SDL_Rect intersect;
-
-SDL_Rect sink = {400, 100, 27, 27};
+SDL_Rect sink{};
 
 float speedX = 0;
 float lt_accel = 0;
@@ -34,8 +38,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, in
 			isRunning = true;
 		}
 	}
-	player = new Entity();
-	newT = new Entity();
+	player = new Entity;
+	level1 = new TileMap;
 }
 
 void Game::handleEvents() {
@@ -85,42 +89,31 @@ void Game::update() {
 		lt_accel = 0;
 	}
 
-	/*
-	if (SDL_GetKeyboardState(0)[SDL_GetScancodeFromKey(SDLK_SPACE)]) {
-		up = 1;
-		gravity = 0;
-	}
-	else {
-		up = 0;
-	}
-	*/
-
 	if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
 
 		// comparing height: top / bottom
 		if (intersect.h <= sink.h) {
 
 			// top collision special if
-			if(intersect.y == sink.y){
+			if (intersect.y == sink.y) {
 				gravity = 0;
 				collision = 0;
-				speedY -= intersect.h ;
+				speedY -= (intersect.h - stay_on_floor);
 			}
 			
 			// bottom collision special if
-			if (intersect.y > (sink.y + 1)) {
+			if (intersect.y > (sink.y + stay_on_floor)) {
 				gravity = 0;
 				up = 0;
-				jumpStr = 0;
-				speedY += (intersect.h);
+				speedY += intersect.h;
 			}
 		}
 
 		// coparing width: left / right
-		if (intersect.w <= sink.w && intersect.y >= (sink.y + 1)) {
+		if (intersect.w <= sink.w && intersect.y >= (sink.y + stay_on_floor)) {
 
 			// left special condition
-			if(intersect.x == sink.x) {
+			if (intersect.x == sink.x) {
 				gravity = 0;
 				rt_accel = 0;
 				speedX -= intersect.w;
@@ -136,7 +129,6 @@ void Game::update() {
 	}
 	else {
 		collision = 1;
-		jumpStr = 26;
 	}
 
 	speedX += rt_accel - lt_accel;
@@ -149,7 +141,10 @@ void Game::render() {
 	// --------------------------
 
 	player->drawPlayer(200, 100, 50, 50);
-	newT->drawTile(400, 100, 100, 300);
+	newT = new Tile(400, 300);
+	sink = { newT->getTile()->x, newT->getTile()->y, sink_depth, sink_depth };
+
+	level1->create_level(tile_map);
 
 	// --------------------------
 	SDL_SetRenderDrawColor(gRenderer, 64, 64, 64, 1);
