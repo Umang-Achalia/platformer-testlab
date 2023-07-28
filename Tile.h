@@ -1,9 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include "Game.h"
-#include "Layout.h"
-using namespace std;
 
 class Tile {
 private:

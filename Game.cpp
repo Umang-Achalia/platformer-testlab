@@ -1,4 +1,9 @@
 #include "Game.h"
+#include <iostream>
+#include "Entity.h"
+#include "TileMap.h"
+#include "Layout.h"
+using namespace std;
 
 const int sink_depth = 27; // px
 
@@ -7,11 +12,12 @@ const int stay_on_floor = 1; // prevents jittering of player on ground
 SDL_Renderer* gRenderer = nullptr; // ~ this is a definition
 
 Entity* player = nullptr;
-Tile* newT = nullptr;
 TileMap* level1 = nullptr;
 
 SDL_Rect intersect;
-SDL_Rect sink{};
+SDL_Rect sink = {NULL, NULL, 27, 27};
+
+vector <Tile*> group_of_tiles{};
 
 float speedX = 0;
 float lt_accel = 0;
@@ -88,62 +94,63 @@ void Game::update() {
 	else {
 		lt_accel = 0;
 	}
+	
+	for(int count = 0; count < group_of_tiles.size(); count++)
+	{
+		if (SDL_IntersectRect(player->getRect(), group_of_tiles[count]->getTile(), &intersect)) {
 
-	if (SDL_IntersectRect(player->getRect(), newT->getTile(), &intersect)) {
+			// comparing height: top / bottom
+			if (intersect.h <= sink.h) {
 
-		// comparing height: top / bottom
-		if (intersect.h <= sink.h) {
+				// top collision special if
+				if (intersect.y == group_of_tiles[count]->getTile()->y) {
+					gravity = 0;
+					collision = 0;
+					speedY -= (intersect.h);
+				}
 
-			// top collision special if
-			if (intersect.y == sink.y) {
-				gravity = 0;
-				collision = 0;
-				speedY -= (intersect.h - stay_on_floor);
+				// bottom collision special if
+				if (intersect.y > (group_of_tiles[count]->getTile()->y)) {
+					gravity = 0;
+					up = 0;
+					speedY += intersect.h;
+				}
 			}
-			
-			// bottom collision special if
-			if (intersect.y > (sink.y + stay_on_floor)) {
-				gravity = 0;
-				up = 0;
-				speedY += intersect.h;
+
+			// coparing width: left / right
+			if (intersect.w <= sink.w && intersect.y >= (group_of_tiles[count]->getTile()->y)) {
+
+				// left special condition
+				if (intersect.x == group_of_tiles[count]->getTile()->x) {
+					gravity = 0;
+					rt_accel = 0;
+					speedX -= intersect.w;
+				}
+
+				// right special condition
+				if (intersect.x > group_of_tiles[count]->getTile()->x) {
+					gravity = 0;
+					lt_accel = 0;
+					speedX += intersect.w;
+				}
 			}
 		}
-
-		// coparing width: left / right
-		if (intersect.w <= sink.w && intersect.y >= (sink.y + stay_on_floor)) {
-
-			// left special condition
-			if (intersect.x == sink.x) {
-				gravity = 0;
-				rt_accel = 0;
-				speedX -= intersect.w;
-			}
-
-			// right special condition
-			if (intersect.x > sink.x) {
-				gravity = 0;
-				lt_accel = 0;
-				speedX += intersect.w;
-			}
+		else {
+			collision = 1;
 		}
-	}
-	else {
-		collision = 1;
 	}
 
 	speedX += rt_accel - lt_accel;
 	gravity++;
-	speedY += (gravity * collision) - (jumpStr * up);
+	speedY += (gravity * collision); - (jumpStr * up);
 }
 
 void Game::render() {
 	SDL_RenderClear(gRenderer);
 	// --------------------------
 
-	player->drawPlayer(200, 100, 50, 50);
-	newT = new Tile(400, 300);
-	sink = { newT->getTile()->x, newT->getTile()->y, sink_depth, sink_depth };
-
+	player->drawPlayer(400, 0, 30, 30);
+	
 	level1->create_level(tile_map);
 
 	// --------------------------

@@ -1,16 +1,5 @@
 #include "Tile.h"
-
-const char* tile_map[10] = {
-"                            ",
-" XX    XXX            XX    ",
-" XX                         ",
-" XXXX          XX        XX ",
-" XXXX        XX             ",
-" XX    X  XXXX    XX   XX   ",
-"       X  XXXX    XX   XXX  ",
-"     XXX  XXXXXX  XX   XXXX ",
-"XXXXXXXX  XXXXXX  XX   XXXX ",
-};
+#include "Game.h"
 
 Tile::Tile(int x, int y) {
 	t_rect.x = x;

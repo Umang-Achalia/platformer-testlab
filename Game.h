@@ -1,12 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include <iostream>
-#include "Entity.h"
-#include "TileMap.h"
-#include "Tile.h"
-#include "Layout.h"
-using namespace std;
 
 extern SDL_Renderer* gRenderer; // ~ this is a declaration
 extern SDL_Renderer* gRenderer; // ~ this is a declaration too. So, many declaraitons do not matter.

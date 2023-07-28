@@ -2,12 +2,12 @@
 
 void TileMap::create_level(const char* tileMap[]) {
 	for (int count = 0; count < 10; count++) {
-		for (int index = 0; index < 29; index++) {
+		for (int index = 0; index < 28; index++) {
 			if (tileMap[count][index] == 'X') {
 				int x, y;
-				x = count * 50;
-				y = index * 50;
-				new Tile(x, y);
+				x = index * 50;
+				y = count * 50;	
+				group_of_tiles.push_back(new Tile(x, y));
 			}
 		}
 	}
