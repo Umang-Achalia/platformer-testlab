@@ -46,6 +46,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, in
 	}
 	player = new Entity;
 	level1 = new TileMap;
+	level1->create_level(tile_map);
 }
 
 void Game::handleEvents() {
@@ -106,19 +107,20 @@ void Game::update() {
 				if (intersect.y == group_of_tiles[count]->getTile()->y) {
 					gravity = 0;
 					collision = 0;
-					speedY -= (intersect.h);
+					speedY -= (intersect.h - stay_on_floor);
 				}
 
 				// bottom collision special if
-				if (intersect.y > (group_of_tiles[count]->getTile()->y)) {
+				if (intersect.y > (group_of_tiles[count]->getTile()->y + stay_on_floor)) {
 					gravity = 0;
 					up = 0;
 					speedY += intersect.h;
 				}
 			}
+			break;
 
 			// coparing width: left / right
-			if (intersect.w <= sink.w && intersect.y >= (group_of_tiles[count]->getTile()->y)) {
+			if (intersect.w <= sink.w && intersect.y >= (group_of_tiles[count]->getTile()->y + stay_on_floor)) {
 
 				// left special condition
 				if (intersect.x == group_of_tiles[count]->getTile()->x) {
@@ -134,6 +136,7 @@ void Game::update() {
 					speedX += intersect.w;
 				}
 			}
+			break;
 		}
 		else {
 			collision = 1;
@@ -150,8 +153,10 @@ void Game::render() {
 	// --------------------------
 
 	player->drawPlayer(400, 0, 30, 30);
-	
-	level1->create_level(tile_map);
+
+	for (int count = 0; count < group_of_tiles.size(); count++) {
+		group_of_tiles[count]->draw_tile();
+	}
 
 	// --------------------------
 	SDL_SetRenderDrawColor(gRenderer, 64, 64, 64, 1);

@@ -6,7 +6,7 @@ void TileMap::create_level(const char* tileMap[]) {
 			if (tileMap[count][index] == 'X') {
 				int x, y;
 				x = index * 50;
-				y = count * 50;	
+				y = count * 50;		
 				group_of_tiles.push_back(new Tile(x, y));
 			}
 		}

@@ -9,4 +9,5 @@ private:
 public:
 	Tile(int, int);
 	SDL_Rect* getTile() { return &t_rect; }
+	void draw_tile();
 };
