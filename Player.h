@@ -1,9 +1,13 @@
 #pragma once
 
-#include <raylib.h>
+#include <SDL.h>
 
 class Player {
 private:
+	SDL_Rect rect;
 public:
-	void drawPlayer(int, int, int, int, Color);
+	void drawPlayer();
+	void setRect(int x, int y, int w, int h);
+	void update();
+	SDL_Rect* getRect() { return &rect; }
 };

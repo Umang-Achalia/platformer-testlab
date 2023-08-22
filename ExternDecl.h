@@ -1,6 +1,10 @@
 #pragma once
 
-#include <raylib.h>
-#include <iostream>
+#include <SDL.h>
 
-extern int move;
+extern SDL_Window* gWindow;
+extern SDL_Renderer* gRenderer;
+
+// MOVEMENT
+extern float speedX;
+extern float speedY;
